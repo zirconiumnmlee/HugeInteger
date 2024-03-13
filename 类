@@ -1,0 +1,166 @@
+#include<iostream>
+#include<stdexcept>
+#include<cmath>
+using namespace std;
+#ifndef HUGEINTEGER_H 
+#define HUGEINTEGER_H 
+class HugeInteger
+{
+private:
+	int length;
+	int integer[40]; // 40 element array 
+
+    int c_to_i() const
+	{
+		int integer_ = 0;
+		for (int i = length - 1; i >= 0; i--)
+		{
+			integer_ += integer[i] * pow(10, length - i - 1);
+		}
+		return integer_;
+	}
+	HugeInteger i_to_c(int x)
+	{
+		char* buffer = new char[40];
+		sprintf_s(buffer, 40, "%d", x);
+		HugeInteger Temp(buffer);
+		return Temp;
+	}
+	
+public:
+	
+	HugeInteger()
+	{
+		length = 0;
+		integer[0] = 0;
+		for (int i = 1; i < 40; i++)
+		{
+			integer[i] = -1;
+		}
+	}
+		// conversion/default constructor 
+	HugeInteger(const char *); // conversion constructor 
+	// addition operator; HugeInteger + HugeInteger 
+	HugeInteger add(const HugeInteger &);
+	// addition operator; HugeInteger + int 
+	HugeInteger add(int);
+	// addition operator; 
+	// HugeInteger + string that represents large integer value 
+	HugeInteger add(const char *);
+	// subtraction operator; HugeInteger - HugeInteger 
+	HugeInteger subtract(const HugeInteger &);
+	// subtraction operator; HugeInteger - int 
+	HugeInteger subtract(int);
+	// subtraction operator; 
+	// HugeInteger - string that represents large integer value 
+	HugeInteger subtract(const char *);
+	bool isEqualTo(HugeInteger &); // is equal to 
+	bool isNotEqualTo(HugeInteger &); // not equal to 
+	bool isGreaterThan(HugeInteger &); // greater than 
+	bool isLessThan(HugeInteger &); // less than 
+	bool isGreaterThanOrEqualTo(HugeInteger &); // greater than 
+	// or equal to 
+	bool isLessThanOrEqualTo(HugeInteger &); // less than or equal 
+	bool isZero(); // is zero 
+	void input(const char *); // input 
+	void output(); // output 
+
+}; // end class HugeInteger 
+#endif 
+
+
+HugeInteger::HugeInteger(const char *c)
+{
+	
+	for (int i = 1; i < 40; i++)
+	{
+		integer[i] = -1;
+	}
+	int i = 0;
+	while ( i < 40 && c[i] != '\0')
+	{
+		integer[i] = c[i] - 48;
+		i++;
+	}
+	length = i;
+}
+
+HugeInteger HugeInteger::add(const HugeInteger &h)
+{
+	int temp = c_to_i() + h.c_to_i();
+	if (temp > (pow(10, 40) - 1)) throw invalid_argument("加法越界");
+	return i_to_c(temp);
+}
+HugeInteger HugeInteger::add(int x)
+{
+	return add(i_to_c(x));
+}
+HugeInteger HugeInteger::add(const char*c)
+{
+	HugeInteger C(c);
+	return add(C);
+}
+
+HugeInteger HugeInteger::subtract(const HugeInteger &h)
+{
+	if (c_to_i() < h.c_to_i())
+	{
+		throw invalid_argument("结果为负数，异常");
+	}
+	int temp = c_to_i() - h.c_to_i();
+	return i_to_c(temp);
+}
+HugeInteger HugeInteger::subtract(int x)
+{
+	return subtract(i_to_c(x));
+}
+HugeInteger HugeInteger::subtract(const char*c)
+{
+	HugeInteger C(c);
+	return subtract(C);
+}
+
+
+bool HugeInteger::isEqualTo(HugeInteger &h)
+{
+	if (c_to_i() == h.c_to_i()) return true;
+	else return false;
+}
+bool HugeInteger::isNotEqualTo(HugeInteger &h)
+{
+	if (c_to_i() == h.c_to_i()) return false;
+	else return true;
+}
+bool HugeInteger::isGreaterThan(HugeInteger &h)
+{
+	if (c_to_i()> h.c_to_i()) return true;
+	else return false;
+}
+bool HugeInteger::isLessThan(HugeInteger &h)
+{
+	if (c_to_i() < h.c_to_i()) return true;
+	else return false;
+}
+bool HugeInteger::isGreaterThanOrEqualTo(HugeInteger &h)
+{
+	if (c_to_i() >= h.c_to_i()) return true;
+	else return false;
+}
+bool HugeInteger::isLessThanOrEqualTo(HugeInteger &h)
+{
+	if (c_to_i() <= h.c_to_i()) return true;
+	else return false;
+}
+bool HugeInteger::isZero()
+{
+	if (c_to_i() == 0) return true;
+	else return false;
+}
+/*void HugeInteger::input(const char *)
+{
+	
+}*/
+void HugeInteger::output()
+{
+	cout << c_to_i();
+}
